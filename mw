@@ -1,0 +1,13 @@
+#!/bin/bash
+# src: http://taka.no32.tk/diary/20050826.html
+#KEY=`echo $@ | nkf -WwMQ | tr = %`
+KEY=`echo $@ | sed 's/ /%20/'`
+echo $@ >> ~/.eng-list # 履歴を保存（不要なら削除）．
+#URI="http://eow.alc.co.jp/$KEY/UTF-8/"
+URI="http://www.merriam-webster.com/dictionary/$KEY"
+#RS=`echo '▼ 検索結果本体 ▼' | nkf -w -w80`
+RS='<div class="headword" id="headword">'
+#RE=`echo '▲ 検索結果本体 ▲' | nkf -w -w80`
+RE='<div class="browse learn_more">'
+curl  -e 'http://www.merriam-webster.com/' -A 'Mozilla/5.0' -s "$URI" | \
+	sed -ne "/$RS/,/$RE/p" | w3m -dump -T 'text/html' |sed -e "s/\($KEY\)/[45m[37m\1[0m/g" |  less -R
